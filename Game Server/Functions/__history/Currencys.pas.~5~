@@ -1,0 +1,89 @@
+unit Currencys;
+
+interface
+
+uses DBCon, AccountInfo, System.SysUtils, Data.DB, Windows;
+
+type
+  TCurrency = class
+    private
+      MySQL: TQuery;
+      AccInfo: TAccountInfo;
+    public
+      GP: Integer;
+      VP: Integer;
+      DPoints: Integer;
+      constructor Create(MySQL: TQuery; AccInfo: TAccountInfo);
+      procedure SendVP(PPlayer: Pointer);
+      procedure Update;
+      procedure OPEN_CALENDAR_BONUS_POINT;
+  end;
+
+implementation
+
+uses Player, GlobalDefs;
+
+constructor TCurrency.Create(MySQL: TQuery; AccInfo: TAccountInfo);
+begin
+  Self.AccInfo:=AccInfo;
+  Self.MySQL:=MySQL;
+  MySQL.SetQuery('SELECT GP, VP, DPOINTS FROM Users WHERE ID = :ID');
+  MySQL.AddParameter('ID',AnsiString(IntToStr(AccInfo.ID)));
+  MySQL.Run(1);
+  if MySQL.Query.IsEmpty = False then begin
+    GP:=MySQL.Query.Fields[0].AsInteger;
+    VP:=MySQL.Query.Fields[1].AsInteger;
+    DPoints:=MySQL.Query.Fields[2].AsInteger;
+  end;
+end;
+
+procedure TCurrency.SendVP(PPlayer: Pointer);
+var
+  Player: TPlayer;
+begin
+  Player:=TPlayer(PPLayer);
+  Player.Buffer.BIn:='';
+  with Player.Buffer do begin
+    Write(Prefix);
+    Write(Dword(Count));
+    WriteCw(Word(SVPID_SENDVP));
+    Write(#$00#$00#$00#$04#$00);
+    WriteCd(VP);
+    FixSize;
+    Encrypt(GenerateIV(0),Random($FF));
+    ClearPacket();
+    end;
+  Player.Send;
+end;
+
+procedure TCurrency.Update;
+begin
+  MySQL.SetQuery('UPDATE Users SET GP = :GP, VP = :VP, DPOINTS = :DPOINTS WHERE ID = :ID');
+  MySQL.AddParameter('GP',AnsiString(IntToStr(GP)));
+  MySQL.AddParameter('VP',AnsiString(IntToStr(VP)));
+  MySQL.AddParameter('DPoints',AnsiString(IntToStr(DPoints)));
+  MySQL.AddParameter('ID',AnsiString(IntToStr(AccInfo.ID)));
+  MySQL.Run(2);
+end;
+
+procedure TCurrency.OPEN_CALENDAR_BONUS_POINT(PPlayer: Pointer);
+var
+  Player: TPlayer;
+begin
+  Player:=TPlayer(OPEN_CALENDAR_BONUS_POINT);
+  Player.Buffer.BIn:='';
+  with Player.Buffer do begin
+    Write(Prefix);
+    WriteCw(Word(OPEN_CALENDAR_BONUS_POINT));
+    Write(#$6c#$f0#$49#$fd#$d7#$ca#$c8#$3a#$35#$0d#$ce#$a8#$08#$00#$45#$00#$00#$62#$56#$21#$40#$00#$72#$06#$db#$33#$c6#$0c#$50#$22#$c0#$a8#$00#$6a#$24#$bf#$0d#$35#$48#$e1#$94#$71#$f5#$a9#$d2#$f2#$50#$18#$fc#$48#$5e#$a9#$00#$00#$3a#$00#$fa#$77#$4c#$00#$00#$00#$53#$53#$53#$53#$53#$53#$53#$53#$1c#$5b#$d9#$46#$b7#$89#$20#$3f#$20#$27#$a6#$05#$6e#$c0#$e6#$70#$29#$08#$28#$41#$42#$5e#$ea#$e9#$84#$d6#$7f#$3d#$e9#$6c#$21#$65#$09#$8b#$a6#$d9#$a1#$f8#$a8#$35#$66#$e2#$);
+    else
+    WriteCd(OPEN_CALENDAR_BONUS_POINT);
+    FixSize;
+    Encrypt(GenerateIV(0),Random($FF));
+    ClearPacket();
+    end
+  Player.Send();
+  end
+  Logger.Write(Format('ABRIU O CALENDARIO [Handle: %d]',[Socket.Handle]),warnings);
+  end;
+end.
