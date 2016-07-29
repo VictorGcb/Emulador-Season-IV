@@ -6,7 +6,7 @@ Desenvolvedor: Shuich / Kurama
 
 Desenvolvedores Atuais.
 
-Victor GCB ISoulCoder Hiro 
+Victor GCB ISoulCoder Hiro Yusuke(Firefoxmito)
 
 # O que funciona?
 
