@@ -7,8 +7,9 @@ uses Player, Windows, Inventory, Log, System.Generics.Collections, DBCon,
 
 type
   TShopGroup = record
-    iStart: Integer;
-    iEnd: Integer;
+    ID: Integer;
+    ItemID: Integer;
+   Name: AnsiString;
   end;
 
 type
@@ -34,11 +35,12 @@ var
   Temp: TShopGroup;
 begin
   Self.MySQL:=MySQL;
-  MySQL.SetQuery('SELECT START, END FROM Shop');
+  MySQL.SetQuery('SELECT ID, ITEMID, NAME FROM Shop');
   MySQL.Run(1);
   while MySQL.Query.Eof = False do begin
-    Temp.iStart:=MySQL.Query.Fields[0].AsInteger;
-    Temp.iEnd:=MySQL.Query.Fields[1].AsInteger;
+    Temp.ID:=MySQL.Query.Fields[0].AsInteger;
+    Temp.ItemID:=MySQL.Query.Fields[0].AsInteger;
+    Temp.Name:=MySQL.Query.Fields[1].AsInteger;
     SetLength(ShopItems,Length(ShopItems)+1);
     ShopItems[Length(ShopItems)-1]:=Temp;
     MySQL.Query.Next;
@@ -102,12 +104,12 @@ var
 begin
   result:=False;
   for i:=0 to Length(ShopItems)-1 do begin
-    if (ShopItems[i].iStart = ID) or (ShopItems[i].iEnd = ID) then begin
+    if (ShopItems[i].ItemID = ID)  then begin
       result:=True;
       Exit;
     end
     else
-      if (ID > ShopItems[i].iStart) and (ID < ShopItems[i].iEnd) then begin
+      if (ID > ShopItems[i].ItemID) then begin
         result:=True;
         Exit;
       end;
