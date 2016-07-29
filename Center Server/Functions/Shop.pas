@@ -6,8 +6,9 @@ uses DBCon, Windows;
 
 type
   TShopGroup = record
-    iStart: Integer;
-    iEnd: Integer;
+    ID: Integer;
+    ItemID: Integer;
+    Name: AnsiString;
   end;
 
 type
@@ -28,12 +29,13 @@ constructor TShop.Create(MySQL: TQuery);
 begin
   Self.MySQL:=MySQL;
   SetLength(Items,0);
-  MySQL.SetQuery('SELECT START, END FROM Shop');
+  MySQL.SetQuery('SELECT ID, ITEMID, NAME FROM Shop');
   MySQL.Run(1);
   while MySQL.Query.Eof = False do begin
     SetLength(Items,Length(Items)+1);
-    Items[Length(Items)-1].iStart:=MySQL.Query.Fields[0].AsInteger;
-    Items[Length(Items)-1].iEnd:=MySQL.Query.Fields[1].AsInteger;
+    Items[Length(Items)-1].ID:=MySQL.Query.Fields[0].AsInteger;
+    Items[Length(Items)-1].ItemID:=MySQL.Query.Fields[1].AsInteger;
+    Items[Length(Items)-1].Name:=MySQL.Query.Fields[1].AsAnsiString;
     MySQL.Query.Next;
   end;
 end;
@@ -52,8 +54,9 @@ begin
     Write(#$00#$01); //01 mostrar apenas os itens da lista 00 mostra todos
     WriteCd(Dword(Length(Items)));
     for i:=0 to Length(Items)-1 do begin
-      WriteCd(Dword(Items[i].iStart));
-      WriteCd(Dword(Items[i].iEnd));
+      WriteCd(Dword(Items[i].ID));
+      WriteCd(Dword(Items[i].ItemID));
+      WriteCd(Dword(Items[i].Name));
     end;
     Write(#$00#$00#$00#$00);
     Compress;
