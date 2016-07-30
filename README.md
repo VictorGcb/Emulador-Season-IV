@@ -6,7 +6,7 @@ Desenvolvedor: Shuich / Kurama
 
 Desenvolvedores Atuais.
 
-Victor GCB ISoulCoder Hiro Yusuke(Firefoxmito)
+Victor GCB ISoulCoder Hiro Yusuke(Firefoxmito) Harou TheBestSong e Ryokun
 
 # O que funciona?
 
