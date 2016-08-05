@@ -29,4 +29,4 @@ Ela precisa estar nesse formato:
 * _GenerateIV = Recebe apenas o IV e o tipo de IV a ser criado e retorna o IV completo.
 * _ClearPacket Deve receber o packet após ter passado pela rotina _Encrypt e irá retornar o packet pronto para envio.
 * 
-<img src="http://i.imgur.com/H1qDqPn.png" />
+<img src="http://i.imgur.com/OoyhXwi.png" />
